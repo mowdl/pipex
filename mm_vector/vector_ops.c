@@ -89,7 +89,7 @@ void	vec_debug(t_vec *vec, int vec_type)
 			ft_printf("    %c", (char *)vec_get(vec, i));
 		i++;
 	}
-	ft_printf("\nele_size: %u", (uint)vec->ele_size);
-	ft_printf("\nlen: %u", (uint)vec->len);
-	ft_printf("\ncap: %u\n", (uint)vec->cap);
+	ft_printf("\nele_size: %u", (unsigned int)vec->ele_size);
+	ft_printf("\nlen: %u", (unsigned int)vec->len);
+	ft_printf("\ncap: %u\n", (unsigned int)vec->cap);
 }

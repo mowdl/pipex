@@ -14,12 +14,21 @@
 # define PIPEX_H
 
 # include <stdlib.h>
+# include <stdio.h>
+# include <fcntl.h>
+
 # include "libft.h"
 # include "ft_printf.h"
 # include "get_next_line.h"
 
-typedef struct s_pipex {
-	char	*args[4];
+typedef struct s_pipex
+{
+	char	**av;
+	char	**envp;
+	int		ac;
+	int		pipe_fd[2];
+	int		fd;
+	int		pid;
 }			t_pipex;
 
 #endif
