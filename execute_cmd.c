@@ -6,11 +6,18 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 21:11:01 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/03/20 01:00:22 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/03/20 01:15:07 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void	parse_cmd(t_pipex *pipex, char *cmd)
+{
+	pipex->cmd_args = ft_split(cmd, ' ');
+	if (pipex->cmd_args == NULL)
+		pipex_error(NULL);
+}
 
 char	**get_path_var(char **envp)
 {
@@ -62,6 +69,8 @@ void	execute_command(t_pipex *pipex, char *cmd)
 	char	**path_var;
 	char	*cmd_path;
 
+	parse_cmd(pipex, cmd);
+	cmd = pipex->cmd_args[0];
 	path_var = get_path_var(pipex->envp);
 	cmd_path = get_cmd_path(path_var, cmd);
 	if (cmd_path == NULL)

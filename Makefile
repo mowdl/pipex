@@ -6,7 +6,7 @@
 #    By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/25 18:52:03 by mel-meka          #+#    #+#              #
-#    Updated: 2024/03/20 00:54:14 by mel-meka         ###   ########.fr        #
+#    Updated: 2024/03/20 01:18:40 by mel-meka         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,8 @@ FT_PRINTF_SRCS = ./ft_printf/ft_printf.c	\
 				 ./ft_printf/ft_putchar.c	\
 
 PIPEX_SRCS = pipex.c			\
-			 execute_cmd.c
+			 execute_cmd.c		\
+			 pipex_error.c
 
 FT_PRINTF_OBJS = $(FT_PRINTF_SRCS:.c=.o)
 GNL_OBJS = $(GNL_SRCS:.c=.o)
