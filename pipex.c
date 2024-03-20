@@ -6,7 +6,7 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 05:47:09 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/03/01 10:49:32 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/03/20 01:01:44 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,46 +42,7 @@ void	pipex_error(char *str)
 		else
 			perror(NULL);
 	}
-	exit(1);
-}
-
-char	**get_path_var(char **envp)
-{
-	char	*path_str;
-	char	**arr;
-
-	path_str == NULL;
-	while (*envp)
-	{
-		if ((*envp)[0] == 'P' && (*envp)[1] == 'A' && (*envp)[2] == 'T' && (*envp)[3] == 'H')
-		{
-			path_str = *envp;
-			break ;
-		}
-		envp++;
-	}
-	if (path_str == NULL)
-		return (NULL);
-	arr = ft_split(path_str, ':');
-	if (arr == NULL)
-		pipex_error(NULL);
-	return (arr);
-}
-
-char	*get_cmd_path(char **path_var)
-{
-	return (path_var[0]);
-}
-
-void	execute_command(t_pipex *pipex, char *cmd)
-{
-	char	**path_var;
-	char	*cmd_path;
-
-	path_var = get_path_var(pipex->envp);
-	cmd_path = get_cmd_path(path_var);
-
-	ft_printf("%p, %p\n", path, cmd);
+	exit(13);
 }
 
 void	child_proc(t_pipex  *pipex)
@@ -92,16 +53,32 @@ void	child_proc(t_pipex  *pipex)
 	if (dup2(pipex->fd, STDIN_FILENO) == -1)
 		pipex_error("dup2");
 	close(pipex->fd);
-	//if (dup2(pipex->pipe_fd[1], STDOUT_FILENO) == -1)
-	//	pipex_error("dup2");
+	if (dup2(pipex->pipe_fd[1], STDOUT_FILENO) == -1)
+		pipex_error("dup2");
 	close(pipex->pipe_fd[1]);
 	close(pipex->pipe_fd[0]);
-	execute_command(pipex, pipex->av[2]);
+	execute_command(pipex, pipex->av[1]);
+}
+
+void	parent_proc(t_pipex  *pipex)
+{
+	pipex->fd = open(pipex->av[4], O_CREAT | O_WRONLY, S_IRUSR + S_IWUSR + S_IRGRP + S_IROTH);
+	if (pipex->fd == -1)
+		pipex_error(pipex->av[4]);
+	if (dup2(pipex->fd, STDOUT_FILENO) == -1)
+		pipex_error("dup2");
+	close(pipex->fd);
+	if (dup2(pipex->pipe_fd[0], STDIN_FILENO) == -1)
+		pipex_error("dup2");
+	close(pipex->pipe_fd[1]);
+	close(pipex->pipe_fd[0]);
+	execute_command(pipex, pipex->av[4]);
 }
 
 int	main(int ac, char **av, char **envp)
 {
 	t_pipex	*pipex;
+	int		wstatus;
 
 	pipex = get_pipex();
 	pipex->av = av;
@@ -116,4 +93,9 @@ int	main(int ac, char **av, char **envp)
 
 	if (pipex->pid == 0)
 		child_proc(pipex);
+	else
+	{
+		parent_proc(pipex);
+		wait(&wstatus);
+	}
 }

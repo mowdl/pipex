@@ -6,7 +6,7 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 05:47:30 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/02/29 05:13:42 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/03/20 00:55:29 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,12 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <fcntl.h>
+# include <sys/wait.h>
 
 # include "libft.h"
 # include "ft_printf.h"
 # include "get_next_line.h"
+
 
 typedef struct s_pipex
 {
@@ -27,8 +29,13 @@ typedef struct s_pipex
 	char	**envp;
 	int		ac;
 	int		pipe_fd[2];
+	char	*cmd;
+	char	**cmd_args;
 	int		fd;
 	int		pid;
 }			t_pipex;
+
+void	execute_command(t_pipex *pipex, char *cmd);
+void	pipex_error(char *str);
 
 #endif
