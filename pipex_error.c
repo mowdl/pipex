@@ -12,11 +12,44 @@
 
 #include "pipex.h"
 
+static char	**free_arr(char **arr)
+{
+	char	**tmp;
+
+	tmp = arr;
+	while (*tmp)
+	{
+		free(*tmp);
+		tmp++;
+	}
+	free(arr);
+	return (NULL);
+}
+
+void	pipex_clean(t_pipex *pipex)
+{
+	if (pipex->cmd_args)
+		free_arr(pipex->cmd_args);
+	if (pipex->path_var)
+		free_arr(pipex->path_var);
+}
+
+void	pipex_cmd_not_found(char *cmd)
+{
+	if (*cmd != '\0' && !write(2, cmd, ft_strlen(cmd)))
+		pipex_error("write", 1);
+	if (!write(2, ": command not found\n", 20))
+		pipex_error("write", 1);
+	pipex_clean(get_pipex());
+	exit(127);
+}
+
 void	pipex_error(char *str, int v)
 {
 	char	*tmp;
 	char	*tmp2;
 
+	pipex_clean(get_pipex());
 	if (str == NULL)
 	{
 		perror(get_pipex()->av[0]);

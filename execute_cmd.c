@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/19 21:11:01 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/03/21 00:08:21 by mel-meka         ###   ########.fr       */
+/*   Created: 2024/03/21 04:41:19 by mel-meka          #+#    #+#             */
+/*   Updated: 2024/03/21 20:45:49 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	parse_cmd(t_pipex *pipex, char *cmd)
 {
 	pipex->cmd_args = ft_split(cmd, ' ');
 	if (pipex->cmd_args == NULL)
-		pipex_error(NULL, 1);
+		pipex_error("ft_split", 1);
 }
 
 char	**get_path_var(char **envp)
@@ -66,10 +66,8 @@ char	*get_cmd_path(char **path_var, char *cmd)
 		free(tmp);
 		path_var++;
 	}
-	if (!write(2, cmd, ft_strlen(cmd))
-		|| !write(2, ": command not found\n", 20))
-		pipex_error("write", 1);
-	exit(127);
+	pipex_cmd_not_found(cmd);
+	return (NULL);
 }
 
 void	execute_command(t_pipex *pipex, char *cmd)
@@ -79,7 +77,10 @@ void	execute_command(t_pipex *pipex, char *cmd)
 
 	parse_cmd(pipex, cmd);
 	cmd = pipex->cmd_args[0];
+	if (cmd == NULL)
+		pipex_cmd_not_found("");
 	path_var = get_path_var(pipex->envp);
+	pipex->path_var = path_var;
 	if (ft_strchr(cmd, '/'))
 	{
 		cmd_path = cmd;

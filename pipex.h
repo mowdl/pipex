@@ -30,14 +30,15 @@ typedef struct s_pipex
 	int		pipe_fd[2];
 	char	*cmd;
 	char	**cmd_args;
+	char	**path_var;
 	int		fd;
-	int		pid;
-	int		pid2;
+	int		pids[2];
 }			t_pipex;
 
 t_pipex	*get_pipex(void);
 
 void	execute_command(t_pipex *pipex, char *cmd);
 void	pipex_error(char *str, int v);
+void	pipex_cmd_not_found(char *cmd);
 
 #endif
