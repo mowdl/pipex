@@ -6,7 +6,7 @@
 /*   By: mel-meka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 05:47:30 by mel-meka          #+#    #+#             */
-/*   Updated: 2024/03/20 01:19:03 by mel-meka         ###   ########.fr       */
+/*   Updated: 2024/03/20 05:29:58 by mel-meka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 # include "ft_printf.h"
 # include "get_next_line.h"
 
-
 typedef struct s_pipex
 {
 	char	**av;
@@ -33,11 +32,12 @@ typedef struct s_pipex
 	char	**cmd_args;
 	int		fd;
 	int		pid;
+	int		pid2;
 }			t_pipex;
 
 t_pipex	*get_pipex(void);
 
 void	execute_command(t_pipex *pipex, char *cmd);
-void	pipex_error(char *str);
+void	pipex_error(char *str, int v);
 
 #endif

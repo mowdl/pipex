@@ -78,7 +78,7 @@ INCLUDES = -I ./libft -I ./get_next_line -I ./ft_printf -I ./mm_vector
 NAME = pipex
 
 
-CFLAGS = -Wall -Wextra -Werror -g $(INCLUDES)
+CFLAGS = -Wall -Wextra -Werror $(INCLUDES)
 
 all: $(NAME)
 
