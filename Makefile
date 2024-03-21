@@ -63,6 +63,11 @@ PIPEX_SRCS = pipex.c			\
 			 execute_cmd.c		\
 			 pipex_error.c
 
+BONUS_SRCS = bonus/pipex_bonus.c			\
+			 bonus/execute_cmd_bonus.c		\
+			 bonus/pipex_error_bonus.c
+
+
 FT_PRINTF_OBJS = $(FT_PRINTF_SRCS:.c=.o)
 GNL_OBJS = $(GNL_SRCS:.c=.o)
 LIBFT_OBJS = $(LIBFT_SRCS:.c=.o)
@@ -71,30 +76,38 @@ PIPEX_OBJS = $(PIPEX_SRCS:.c=.o)
 SRCS = $(GNL_SRCS) $(LIBFT_SRCS) $(FT_PRINTF_SRCS) $(MM_VECTOR_OBJS)
 OBJS = $(SRCS:.c=.o)
 PIPEX_OBJS = $(PIPEX_SRCS:.c=.o)
+BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 
 INCLUDES = -I ./libft -I ./get_next_line -I ./ft_printf -I ./mm_vector
 
 
 NAME = pipex
 
+BONUS = pipex_bonus
 
 CFLAGS = -Wall -Wextra -Werror $(INCLUDES)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(MLX) $(PIPEX_OBJS)
+$(NAME): $(OBJS) $(PIPEX_OBJS)
 	$(CC) $^ -o $@
 
 
 $(PIPEX_OBJS): $(PIPEX_SRCS)
 	$(CC) $(CFLAGS) $(PIPEX_SRCS) -c
 
+bonus: $(BONUS)
+
+$(BONUS): $(BONUS_OBJS) $(OBJS)
+	$(CC) $^ -o $@
+
+
 
 
 clean:
-	$(RM) $(OBJS) $(PIPEX_OBJS)
+	$(RM) $(OBJS) $(PIPEX_OBJS) $(BONUS_OBJS)
 
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) $(BONUS)
 
 re: fclean all
