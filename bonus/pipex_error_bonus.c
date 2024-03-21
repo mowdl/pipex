@@ -14,7 +14,7 @@
 
 static char	**free_arr(char **arr)
 {
-	char **tmp;
+	char	**tmp;
 
 	tmp = arr;
 	while (*tmp)
@@ -38,8 +38,9 @@ void	pipex_clean(t_pipex *pipex)
 
 void	pipex_cmd_not_found(char *cmd)
 {
-	if (!write(2, cmd, ft_strlen(cmd))
-		|| !write(2, ": command not found\n", 20))
+	if (*cmd != '\0' && !write(2, cmd, ft_strlen(cmd)))
+		pipex_error("write", 1);
+	if (!write(2, ": command not found\n", 20))
 		pipex_error("write", 1);
 	pipex_clean(get_pipex());
 	exit(127);

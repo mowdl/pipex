@@ -23,6 +23,7 @@ t_pipex	*get_pipex(void)
 int	first_cmd(t_pipex *pipex)
 {
 	int	pid;
+
 	pid = fork();
 	if (pid == -1)
 		pipex_error("fork", 1);
@@ -45,6 +46,7 @@ int	first_cmd(t_pipex *pipex)
 int	last_cmd(t_pipex *pipex)
 {
 	int	pid;
+
 	pid = fork();
 	if (pid == -1)
 		pipex_error("fork", 1);
@@ -65,23 +67,32 @@ int	last_cmd(t_pipex *pipex)
 	return (-1);
 }
 
-int	fork_and_execute(char *cmd, int fd_in, int fd_out)
+void	exec_cmds_from_argv(t_pipex *pipex, int ac, char **av)
 {
-	int	pid;
+	int	i;
 
-	pid = fork();
-	if (pid == -1)
-		pipex_error("fork", 1);
-	if (pid !=0)
-		return (pid);
-	if (dup2(fd_out, STDOUT_FILENO) == -1)
-		pipex_error("dup2", 1);
-	close(fd_out);
-	if (dup2(fd_in, STDIN_FILENO) == -1)
-		pipex_error("dup2", 1);
-	close(fd_in);
-	execute_command(get_pipex(), cmd);
-	return (-1);
+	if (pipe(pipex->pipe_fd[0]) == -1)
+		pipex_error("pipe", 1);
+	pipex->pids = malloc(sizeof(int) * (ac - 3));
+	if (pipex->pids == NULL)
+		pipex_error(NULL, 1);
+	pipex->pids[0] = first_cmd(pipex);
+	close(pipex->pipe_fd[0][1]);
+	i = 3;
+	while (i < ac - 2)
+	{
+		if (pipe(pipex->pipe_fd[1]) == -1)
+			pipex_error("pipe", 1);
+		pipex->pids[i - 2] = fork_and_execute(av[i],
+				pipex->pipe_fd[0][0],
+				pipex->pipe_fd[1][1]);
+		close(pipex->pipe_fd[0][0]);
+		close(pipex->pipe_fd[1][1]);
+		pipex->pipe_fd[0][0] = pipex->pipe_fd[1][0];
+		i++;
+	}
+	pipex->pids[ac - 3 - 1] = last_cmd(pipex);
+	close(pipex->pipe_fd[0][0]);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -96,26 +107,7 @@ int	main(int ac, char **av, char **envp)
 	pipex->av = av;
 	pipex->ac = ac;
 	pipex->envp = envp;
-	if (pipe(pipex->pipe_fd[0]) == -1)
-		pipex_error("pipe", 1);
-	pipex->pids = malloc(sizeof(int) * (ac - 3));
-	if (pipex->pids == NULL)
-		pipex_error(NULL, 1);
-	pipex->pids[0] = first_cmd(pipex);
-	close(pipex->pipe_fd[0][1]);
-	i = 3;
-	while (i < ac - 2)
-	{
-		if (pipe(pipex->pipe_fd[1]) == -1)
-			pipex_error("pipe", 1);
-		pipex->pids[i - 2] = fork_and_execute(av[i], pipex->pipe_fd[0][0], pipex->pipe_fd[1][1]);
-		close(pipex->pipe_fd[0][0]);
-		close(pipex->pipe_fd[1][1]);
-		pipex->pipe_fd[0][0] = pipex->pipe_fd[1][0];
-		i++;
-	}
-	pipex->pids[ac - 3 - 1] = last_cmd(pipex);
-	close(pipex->pipe_fd[0][0]);
+	exec_cmds_from_argv(pipex, ac, av);
 	i = 0;
 	wstatus = 0;
 	while (i < ac - 3)

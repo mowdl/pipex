@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
+#ifndef PIPEX_BONUS_H
+# define PIPEX_BONUS_H
 
 # include <stdlib.h>
 # include <stdio.h>
@@ -40,5 +40,6 @@ t_pipex	*get_pipex(void);
 void	execute_command(t_pipex *pipex, char *cmd);
 void	pipex_error(char *str, int v);
 void	pipex_cmd_not_found(char *cmd);
+int		fork_and_execute(char *cmd, int fd_in, int fd_out);
 
 #endif

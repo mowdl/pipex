@@ -16,7 +16,7 @@ void	parse_cmd(t_pipex *pipex, char *cmd)
 {
 	pipex->cmd_args = ft_split(cmd, ' ');
 	if (pipex->cmd_args == NULL)
-		pipex_error(NULL, 1);
+		pipex_error("ft_split", 1);
 }
 
 char	**get_path_var(char **envp)
@@ -77,6 +77,8 @@ void	execute_command(t_pipex *pipex, char *cmd)
 
 	parse_cmd(pipex, cmd);
 	cmd = pipex->cmd_args[0];
+	if (cmd == NULL)
+		pipex_cmd_not_found("");
 	path_var = get_path_var(pipex->envp);
 	pipex->path_var = path_var;
 	if (ft_strchr(cmd, '/'))
@@ -91,4 +93,23 @@ void	execute_command(t_pipex *pipex, char *cmd)
 		cmd_path = get_cmd_path(path_var, cmd);
 	execve(cmd_path, pipex->cmd_args, pipex->envp);
 	pipex_error(NULL, 1);
+}
+
+int	fork_and_execute(char *cmd, int fd_in, int fd_out)
+{
+	int	pid;
+
+	pid = fork();
+	if (pid == -1)
+		pipex_error("fork", 1);
+	if (pid != 0)
+		return (pid);
+	if (dup2(fd_out, STDOUT_FILENO) == -1)
+		pipex_error("dup2", 1);
+	close(fd_out);
+	if (dup2(fd_in, STDIN_FILENO) == -1)
+		pipex_error("dup2", 1);
+	close(fd_in);
+	execute_command(get_pipex(), cmd);
+	return (-1);
 }
