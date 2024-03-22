@@ -102,7 +102,7 @@ int	main(int ac, char **av, char **envp)
 	int		i;
 
 	if (ac < 4)
-		pipex_error(NULL, 1);
+		exit(1);
 	pipex = get_pipex();
 	pipex->av = av;
 	pipex->ac = ac;

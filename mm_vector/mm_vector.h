@@ -21,7 +21,8 @@
 # define VEC_CHAR	1
 # define VEC_STR	2
 
-typedef struct s_vec {
+typedef struct s_vec
+{
 	void	*v;
 	size_t	ele_size;
 	size_t	len;

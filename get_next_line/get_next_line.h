@@ -24,7 +24,8 @@ char	*get_next_line(int fd);
 void	*ft_memchr(const void *s, int c, size_t n);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 
-typedef struct s_string{
+typedef struct s_string
+{
 	char	*s;
 	size_t	ele_size;
 	size_t	len;
